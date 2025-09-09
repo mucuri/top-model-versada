@@ -2,6 +2,10 @@
 // instead of directly to the Google Gemini API, to protect the API key.
 
 export const generateFashionImage = async (base64Image: string, stylePrompt: string): Promise<string> => {
+  const controller = new AbortController();
+  // Set a 30-second timeout for the request
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
   try {
     // We send the image data and prompt to our backend function.
     const response = await fetch('/api/generate', {
@@ -13,7 +17,11 @@ export const generateFashionImage = async (base64Image: string, stylePrompt: str
         base64Image,
         stylePrompt,
       }),
+      signal: controller.signal, // Pass the AbortSignal to the fetch request
     });
+    
+    // If the request completes, clear the timeout
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -29,9 +37,14 @@ export const generateFashionImage = async (base64Image: string, stylePrompt: str
     return data.imageUrl;
 
   } catch (error) {
-    console.error("Error calling backend to generate image:", error);
+    // Clear the timeout in case of an error as well
+    clearTimeout(timeoutId);
+
     if (error instanceof Error) {
-        // Pass the error message along
+        if (error.name === 'AbortError') {
+            throw new Error("A geração demorou muito. O servidor pode estar ocupado. Por favor, tente novamente em alguns instantes.");
+        }
+        // Pass the original error message along
         throw new Error(error.message);
     }
     throw new Error("Falha ao gerar a imagem. Por favor, tente novamente.");

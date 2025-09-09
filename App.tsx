@@ -9,7 +9,7 @@ import TermsScreen from './components/TermsScreen';
 import ProScreen from './components/ProScreen';
 import InfoScreen from './components/InfoScreen';
 import ImageModal from './components/ImageModal';
-import { LoadingSpinner } from './components/icons';
+import { LoadingSpinner, CheckCircleIcon } from './components/icons';
 import { generateFashionImage } from './services/geminiService';
 import { APP_NAME, COOLDOWN_MINUTES } from './constants';
 
@@ -19,6 +19,93 @@ const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Mock database of usernames for uniqueness check simulation
 const existingUsernames = new Set(['JohnModel', 'JaneModel']);
+
+// Constants for the GeneratingScreen component
+const GENERATING_STEPS = [
+    { text: "Analisando traços da selfie...", duration: 1500 },
+    { text: "Esboçando 6 poses exclusivas...", duration: 2500 },
+    { text: "Aplicando o estilo de moda selecionado...", duration: 3000 },
+    { text: "Ajustando iluminação e cenário...", duration: 2000 },
+    { text: "Renderizando em alta definição...", duration: 3500 },
+    { text: "Adicionando a marca d'água final...", duration: 1000 }
+];
+
+const GENERATING_TIPS = [
+    "Dica de mestre: a confiança é o seu melhor acessório.",
+    "A passarela espera por você...",
+    "Preparando seu close-up...",
+    "Cada grande modelo começou com uma única foto.",
+    "Lembre-se: você é a estrela."
+];
+
+
+const GeneratingScreen: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [currentTip, setCurrentTip] = useState(GENERATING_TIPS[0]);
+
+  useEffect(() => {
+    // Step progression with variable timing
+    if (currentStep < GENERATING_STEPS.length - 1) {
+      const timer = setTimeout(() => {
+        setCurrentStep(prev => prev + 1);
+      }, GENERATING_STEPS[currentStep].duration);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    // Tip rotation
+    const tipInterval = setInterval(() => {
+      setCurrentTip(GENERATING_TIPS[Math.floor(Math.random() * GENERATING_TIPS.length)]);
+    }, 3500);
+
+    return () => clearInterval(tipInterval);
+  }, []);
+
+  const progress = Math.round(((currentStep + 1) / GENERATING_STEPS.length) * 100);
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4 text-center">
+        <div className="w-full max-w-md">
+            <h2 className="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-500">
+                Gerando sua obra-prima...
+            </h2>
+            <p className="text-gray-400 mt-2 mb-6">A IA está criando seu portfólio. Isso pode levar um minuto.</p>
+
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-700/50 rounded-full h-2.5 mb-2">
+                <div 
+                    className="bg-gradient-to-r from-fuchsia-500 to-cyan-500 h-2.5 rounded-full transition-all duration-1000 ease-out" 
+                    style={{ width: `${progress}%` }}>
+                </div>
+            </div>
+            <p className="text-sm font-semibold text-cyan-400 mb-6">{progress}%</p>
+            
+            <div className="text-left space-y-3">
+                {GENERATING_STEPS.map((step, index) => (
+                <div key={index} className={`flex items-center p-3 rounded-lg transition-all duration-500 ${index <= currentStep ? 'bg-gray-800' : 'bg-gray-800/50'}`}>
+                    {index < currentStep ? (
+                    <CheckCircleIcon className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                    ) : index === currentStep ? (
+                    <div className="w-5 h-5 mr-3 flex-shrink-0 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-fuchsia-500"></div>
+                    </div>
+                    ) : (
+                    <div className="w-5 h-5 mr-3 flex-shrink-0">
+                        <div className="w-4 h-4 rounded-full bg-gray-600"></div>
+                    </div>
+                    )}
+                    <span className={`transition-colors duration-500 ${index <= currentStep ? 'text-white' : 'text-gray-500'}`}>{step.text}</span>
+                </div>
+                ))}
+            </div>
+            
+            <p className="text-gray-500 mt-8 text-sm italic">"{currentTip}"</p>
+        </div>
+    </div>
+  );
+};
+
 
 const App: React.FC = () => {
   const [appStep, setAppStep] = useState<AppStep>(AppStep.LOGIN);
@@ -247,18 +334,7 @@ const App: React.FC = () => {
       case AppStep.STYLE_SELECTION:
         return <StyleSelector onStyleSelect={handleStyleSelect} />;
       case AppStep.GENERATING:
-        return (
-          <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4 text-center">
-            <LoadingSpinner />
-            <h2 className="text-2xl font-bold mt-4">Gerando sua obra-prima...</h2>
-            <p className="text-gray-400 mt-2">A IA está trabalhando na sua foto. Isso pode levar um minuto.</p>
-             <div className="mt-4 text-sm text-gray-500 bg-gray-800 p-3 rounded-lg">
-                <p>Adicionando seu rosto em 6 poses...</p>
-                <p>Aplicando o estilo de moda...</p>
-                <p>Criando o cenário perfeito...</p>
-              </div>
-          </div>
-        );
+        return <GeneratingScreen />;
       case AppStep.MAIN_VIEW:
         if (!user || !user.name || !user.city || !user.country) {
           setAppStep(AppStep.LOGIN);

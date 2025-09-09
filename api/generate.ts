@@ -3,6 +3,7 @@
 // This protects your API key.
 
 import { GoogleGenAI, Modality } from "@google/genai";
+import { APP_NAME } from '../constants'; // Import APP_NAME
 
 // This is a Vercel Edge Function, which uses a standard Request/Response API.
 // In many environments, you might need to export a handler function differently.
@@ -50,7 +51,7 @@ export default async function handler(req: Request) {
 2.  **Aspect Ratio:** The aspect ratio MUST be exactly 9:16. NOT 1:1, NOT 16:9. It must be vertical like a phone screen.
 3.  **Content - Poses:** The image MUST contain exactly SIX (6) distinct full-body poses of the same person. Not 4, not 8. Exactly 6.
 4.  **Content - Face:** The face from the user's input image MUST be realistically integrated onto the model in all six poses.
-5.  **Watermark:** A text watermark with the words "Top Model Versada .app" MUST be placed in the bottom-left corner of the final image. Make it subtle and stylish.
+5.  **Watermark:** A text watermark with the words "${APP_NAME}" MUST be placed in the bottom-left corner of the final image. Make it subtle and stylish.
 
 **CREATIVE TASK:**
 -   **Style:** Create a high-fashion, professional, and glamorous photoshoot.
