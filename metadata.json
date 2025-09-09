@@ -1,0 +1,7 @@
+{
+  "name": "Top Model AI",
+  "description": "An application that uses AI to generate fashion model-style photos. Users can upload their selfie, choose a fashion style, and create a professional-looking photo collage with six different poses, ready for their portfolio.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
