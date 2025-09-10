@@ -9,6 +9,10 @@ import { GoogleGenAI, Modality } from "@google/genai";
 // For Vercel, creating a file in the /api folder is enough.
 // The types for Request and Response are globally available in these environments.
 
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(req: Request) {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
