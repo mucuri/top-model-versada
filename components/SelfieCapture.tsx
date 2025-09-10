@@ -12,13 +12,14 @@ interface SelfieCaptureProps {
 const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm, t }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null); // Use a ref to manage the stream
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
 
   const startCamera = useCallback(async (mode: 'user' | 'environment') => {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+    // Stop any existing stream
+    if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
     }
     try {
       const newStream = await navigator.mediaDevices.getUserMedia({
@@ -27,7 +28,7 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm, t }) => 
             aspectRatio: 1 
         }
       });
-      setStream(newStream);
+      streamRef.current = newStream; // Store stream in ref
       if (videoRef.current) {
         videoRef.current.srcObject = newStream;
       }
@@ -35,13 +36,15 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm, t }) => 
       console.error("Error accessing camera:", err);
       alert(t('alert_camera_permission'));
     }
-  }, [stream, t]);
+  }, [t]); // Dependency on `t` for the alert message
 
   useEffect(() => {
     startCamera(facingMode);
+
+    // Cleanup function when the component unmounts or dependencies change
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
   }, [facingMode, startCamera]);
@@ -59,7 +62,17 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm, t }) => 
       if (context) {
         const sx = (video.videoWidth - size) / 2;
         const sy = (video.videoHeight - size) / 2;
-        context.drawImage(video, sx, sy, size, size, 0, 0, size, size);
+        
+        // Flip the captured image horizontally for the user-facing camera to match the preview
+        if (facingMode === 'user') {
+            context.save();
+            context.scale(-1, 1);
+            context.drawImage(video, sx, sy, size, size, -size, 0, size, size);
+            context.restore();
+        } else {
+            context.drawImage(video, sx, sy, size, size, 0, 0, size, size);
+        }
+        
         const imageData = canvas.toDataURL('image/png');
         setCapturedImage(imageData);
       }
@@ -84,7 +97,8 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm, t }) => 
           {capturedImage ? (
             <img src={capturedImage} alt="Captured Selfie" className="w-full h-full object-cover" />
           ) : (
-            <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+            // Mirror the video preview for a more natural selfie experience
+            <video ref={videoRef} autoPlay playsInline className={`w-full h-full object-cover ${facingMode === 'user' ? 'transform -scale-x-100' : ''}`} />
           )}
           <canvas ref={canvasRef} className="hidden"></canvas>
         </div>
