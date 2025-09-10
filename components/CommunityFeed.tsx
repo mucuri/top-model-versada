@@ -33,45 +33,53 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, 
           {images.map((image) => (
             <div 
                 key={image.id} 
-                className="mb-4 break-inside-avoid relative group cursor-pointer"
-                onClick={() => onImageSelect(image)}
+                className="mb-4 break-inside-avoid bg-gray-800 rounded-lg overflow-hidden shadow-lg flex flex-col"
             >
-              <img src={image.imageUrl} alt={image.prompt} className="w-full rounded-lg shadow-lg" />
+              <img 
+                src={image.imageUrl} 
+                alt={image.prompt} 
+                className="w-full cursor-pointer"
+                onClick={() => onImageSelect(image)}
+              />
               
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 rounded-lg flex flex-col justify-between p-3 opacity-0 group-hover:opacity-100">
-                <div className="flex items-center space-x-2">
+              <div className="p-3">
+                {/* Author Info */}
+                <div className="flex items-center space-x-2 mb-2" onClick={() => onImageSelect(image)}>
                     <span className="text-xl">{countryToFlag(image.authorCountry)}</span>
                     <div>
-                        <p className="text-white text-sm font-bold">@{image.author}</p>
-                        <p className="text-white text-xs">{image.authorCity}</p>
+                        <p className="text-white text-sm font-bold leading-tight">@{image.author}</p>
+                        <p className="text-gray-400 text-xs leading-tight">{image.authorCity}</p>
                     </div>
                 </div>
                 
-                <div className="flex justify-end items-center space-x-3">
+                {/* Actions */}
+                <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-700/50">
                    <button 
-                      onClick={(e) => { e.stopPropagation(); onGenerate(image.prompt); }} 
-                      disabled={!canGenerate}
-                      className="text-white hover:text-fuchsia-400 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed"
-                      aria-label="Gerar com este estilo"
-                      title="Gerar com este estilo"
-                  >
-                      <MagicWandIcon className="w-5 h-5" />
-                  </button>
-                  <button 
                       onClick={(e) => { e.stopPropagation(); onLike(image.id); }} 
-                      className="flex items-center space-x-1.5 text-white hover:text-red-400 transition-colors"
+                      className="flex items-center space-x-1.5 text-gray-300 hover:text-red-400 transition-colors"
                       aria-label={`Like image by ${image.author}, currently ${image.likes} likes`}
                   >
                       <HeartIcon className="w-5 h-5" filled={image.likedByUser} />
-                      <span className="font-semibold text-base">{image.likes}</span>
+                      <span className="font-semibold text-sm">{image.likes}</span>
                   </button>
-                  <button 
-                      onClick={(e) => { e.stopPropagation(); onShare(image); }}
-                      className="text-white hover:text-cyan-400 transition-colors"
-                      aria-label="Share or download image"
-                  >
-                      <ShareIcon className="w-5 h-5" />
-                  </button>
+                  <div className="flex items-center space-x-3">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); onGenerate(image.prompt); }} 
+                        disabled={!canGenerate}
+                        className="text-gray-300 hover:text-fuchsia-400 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed"
+                        aria-label="Gerar com este estilo"
+                        title="Gerar com este estilo"
+                    >
+                        <MagicWandIcon className="w-5 h-5" />
+                    </button>
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); onShare(image); }}
+                        className="text-gray-300 hover:text-cyan-400 transition-colors"
+                        aria-label="Share or download image"
+                    >
+                        <ShareIcon className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
