@@ -19,10 +19,10 @@ export const generateFashionImage = async (base64Image: string, stylePrompt: str
     clearTimeout(timeoutId);
     if (error instanceof Error && error.name === 'AbortError') {
       // This catches our client-side 30s timeout
-      throw new Error("A geração demorou muito (30s) e foi cancelada. Por favor, tente novamente.");
+      throw new Error("error_timeout_30s");
     }
     // This catches network errors (e.g., no internet)
-    throw new Error("Erro de conexão. Verifique sua internet e tente novamente.");
+    throw new Error("error_connection");
   } finally {
       clearTimeout(timeoutId);
   }
@@ -30,30 +30,29 @@ export const generateFashionImage = async (base64Image: string, stylePrompt: str
   // --- Process the response with robust error handling ---
   let data;
   try {
-    // The critical step: attempt to parse the response as JSON.
-    // If this fails, we know the server sent something else (like an HTML error page).
     data = await response.json();
   } catch (error) {
-    // This block catches JSON parsing errors, which IS the "Unexpected token 'A'..." issue.
     if (response.status === 504) {
-      throw new Error("O servidor demorou muito para responder (IA muito ocupada). Por favor, tente novamente em alguns instantes.");
+      throw new Error("error_server_timeout");
     }
-    // For any other non-JSON response, it's an unexpected server crash.
-    throw new Error(`O servidor retornou uma resposta inesperada (status ${response.status}). Tente novamente.`);
+    throw new Error(`error_unexpected_response|${response.status}`);
   }
 
-  // If we successfully parsed JSON, check if it's a success or a server-defined error.
   if (!response.ok) {
-    // The server sent a JSON error payload, e.g., { "error": "Something went wrong" }
-    // The 'data' variable holds the parsed JSON from the try-catch block above.
-    throw new Error(data.error || `Ocorreu um erro no servidor (status ${response.status}).`);
+     const serverError = data.error || `error_server_status|${response.status}`;
+     // Check for specific error messages from the backend
+     if (typeof serverError === 'string' && serverError.includes("INTERNAL")) {
+         return "error_google_internal";
+     }
+     if (typeof serverError === 'string' && serverError.includes("INVALID_ARGUMENT")) {
+         return "error_google_invalid_argument";
+     }
+    throw new Error(serverError);
   }
 
-  // If we are here, response was OK and JSON was parsed successfully.
   if (data && data.imageUrl) {
     return data.imageUrl;
   } else {
-    // The response was successful, but the expected data wasn't there.
-    throw new Error("A resposta do servidor foi bem-sucedida, mas não continha uma imagem.");
+    throw new Error("error_no_image_in_response");
   }
 };

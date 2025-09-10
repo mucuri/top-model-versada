@@ -1,11 +1,15 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { CameraIcon, CheckIcon, FlipCameraIcon } from './icons';
+import { Language } from '../types';
 
 interface SelfieCaptureProps {
   onSelfieConfirm: (imageData: string) => void;
+  // Fix: Update type for t function to allow for arguments
+  t: (key: string, ...args: any[]) => string;
+  language: Language;
 }
 
-const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
+const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm, t }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -17,8 +21,6 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
         stream.getTracks().forEach(track => track.stop());
     }
     try {
-      // Removed specific resolution constraints to let the browser use camera defaults,
-      // which should fix the "dark image" issue on some devices.
       const newStream = await navigator.mediaDevices.getUserMedia({
         video: { 
             facingMode: mode,
@@ -31,9 +33,9 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
       }
     } catch (err) {
       console.error("Error accessing camera:", err);
-      alert("Não foi possível acessar a câmera. Por favor, verifique as permissões no seu navegador.");
+      alert(t('alert_camera_permission'));
     }
-  }, [stream]);
+  }, [stream, t]);
 
   useEffect(() => {
     startCamera(facingMode);
@@ -42,22 +44,19 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
         stream.getTracks().forEach(track => track.stop());
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [facingMode]);
+  }, [facingMode, startCamera]);
 
   const handleCapture = () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
       
-      // Make canvas square
       const size = Math.min(video.videoWidth, video.videoHeight);
       canvas.width = size;
       canvas.height = size;
       
       const context = canvas.getContext('2d');
       if (context) {
-        // Crop the image to a square from the center
         const sx = (video.videoWidth - size) / 2;
         const sy = (video.videoHeight - size) / 2;
         context.drawImage(video, sx, sy, size, size, 0, 0, size, size);
@@ -78,8 +77,8 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4">
       <div className="w-full max-w-md mx-auto bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-white pt-6">Capture sua Selfie</h2>
-        <p className="text-center text-gray-400 mb-4 px-6">Posicione seu rosto no centro.</p>
+        <h2 className="text-2xl font-bold text-center text-white pt-6">{t('selfie_capture_title')}</h2>
+        <p className="text-center text-gray-400 mb-4 px-6">{t('selfie_capture_subtitle')}</p>
 
         <div className="relative w-full aspect-square bg-gray-700">
           {capturedImage ? (
@@ -97,13 +96,13 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
                 onClick={handleRetake}
                 className="w-full bg-gray-600 text-white font-bold py-3 rounded-md hover:bg-gray-500 transition-colors"
               >
-                Tirar Outra
+                {t('selfie_capture_retake_button')}
               </button>
               <button
                 onClick={() => onSelfieConfirm(capturedImage)}
                 className="w-full bg-gradient-to-r from-fuchsia-500 to-cyan-500 text-white font-bold py-3 rounded-md hover:opacity-90 transition-opacity flex items-center justify-center"
               >
-                Confirmar <CheckIcon className="w-5 h-5 ml-2" />
+                {t('selfie_capture_confirm_button')} <CheckIcon className="w-5 h-5 ml-2" />
               </button>
             </div>
           ) : (

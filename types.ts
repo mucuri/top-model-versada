@@ -11,10 +11,19 @@ export enum AppStep {
   PROFILE_SCREEN, // New step for user profile
 }
 
+export type Language = 'pt' | 'it' | 'en';
+
+export interface Translations {
+  [key: string]: {
+    [lang in Language]: string;
+  };
+}
+
 export interface User {
   name: string;
   city: string;
   country: string;
+  language: Language;
   selfie: string | null; // base64 string
   hasCompletedSetup?: boolean; // To track onboarding completion
 }
@@ -33,7 +42,6 @@ export interface GeneratedImage {
 
 export interface StyleOption {
   id: string;
-  name: string;
+  name: string; // This will now be a translation key
   prompt: string;
-  thumbnail: string;
 }

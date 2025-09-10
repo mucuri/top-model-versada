@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { GeneratedImage } from '../types';
+import { GeneratedImage, Language } from '../types';
 import { CloseIcon, HeartIcon, ShareIcon } from './icons';
-import { APP_NAME } from '../constants';
 
 interface ImageModalProps {
   image: GeneratedImage;
@@ -10,24 +9,26 @@ interface ImageModalProps {
   onShare: (image: GeneratedImage) => void;
   onGenerate: (prompt: string) => void;
   cooldownTime: number;
+  t: (key: string, ...args: any[]) => string;
+  language: Language;
 }
 
 const countryToFlag = (countryName: string): string => {
-    // Simple mapping for demo purposes. A real app would use a library.
     const flags: { [key: string]: string } = {
         'Brasil': '🇧🇷',
+        'Italia': '🇮🇹',
+        'Italy': '🇮🇹',
     };
     return flags[countryName] || '🏳️';
 };
 
-
-const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare, onGenerate, cooldownTime }) => {
+const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare, onGenerate, cooldownTime, t }) => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (cooldownTime > 0) {
+      if (cooldownTime > Date.now()) {
         const remaining = Math.max(0, cooldownTime - Date.now());
         setMinutes(Math.floor((remaining / 1000 / 60) % 60));
         setSeconds(Math.floor((remaining / 1000) % 60));
@@ -63,12 +64,11 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
         <button 
           onClick={onClose} 
           className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 z-20 hover:scale-110 hover:bg-black transition-all"
-          aria-label="Close image view"
+          aria-label={t('aria_close_modal')}
         >
           <CloseIcon className="w-5 h-5" />
         </button>
 
-        {/* Image container */}
         <div className="flex-grow w-full h-full flex justify-center items-center overflow-hidden p-4 relative">
             <img 
               src={image.imageUrl} 
@@ -77,7 +77,6 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
             />
         </div>
 
-        {/* Info and Actions Footer */}
         <div className="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 mr-4">
@@ -94,7 +93,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
                   <button 
                       onClick={() => onLike(image.id)} 
                       className="flex items-center space-x-1.5 text-white hover:text-red-400 transition-colors"
-                      aria-label={`Like image, currently ${image.likes} likes`}
+                      aria-label={t('aria_like_image', image.author, image.likes)}
                   >
                       <HeartIcon className="w-6 h-6" filled={image.likedByUser} />
                       <span className="font-semibold text-lg">{image.likes}</span>
@@ -102,7 +101,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
                   <button 
                       onClick={() => onShare(image)}
                       className="text-white hover:text-cyan-400 transition-colors"
-                      aria-label="Share or download image"
+                      aria-label={t('aria_share_image')}
                   >
                       <ShareIcon className="w-6 h-6" />
                   </button>
@@ -114,9 +113,9 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
                 className="w-full bg-gradient-to-r from-fuchsia-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity duration-300 flex justify-center items-center text-base"
             >
                 {canGenerate ? (
-                    '✨ Usar este Estilo'
+                    t('modal_use_style_button')
                 ) : (
-                    <span>Aguarde {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}</span>
+                    <span>{t('main_view_wait_button')} {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}</span>
                 )}
             </button>
         </div>
