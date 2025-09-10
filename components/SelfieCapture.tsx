@@ -61,7 +61,7 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onSelfieConfirm }) => {
         const sx = (video.videoWidth - size) / 2;
         const sy = (video.videoHeight - size) / 2;
         context.drawImage(video, sx, sy, size, size, 0, 0, size, size);
-        const imageData = canvas.toDataURL('image/jpeg');
+        const imageData = canvas.toDataURL('image/png');
         setCapturedImage(imageData);
       }
     }
