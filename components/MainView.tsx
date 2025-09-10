@@ -12,7 +12,7 @@ interface MainViewProps {
   onLike: (imageId: string) => void;
   onShare: (image: GeneratedImage) => void;
   onImageSelect: (image: GeneratedImage) => void;
-  onGoToPro: () => void;
+  onGoToPayment: () => void;
   onGoToInfo: () => void;
   onGoToProfile: () => void;
   onLogout: () => void;
@@ -20,7 +20,7 @@ interface MainViewProps {
   language: Language;
 }
 
-const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownTime, onLike, onShare, onImageSelect, onGoToPro, onGoToInfo, onGoToProfile, onLogout, t, language }) => {
+const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownTime, onLike, onShare, onImageSelect, onGoToPayment, onGoToInfo, onGoToProfile, onLogout, t, language }) => {
   const [selectedStyle, setSelectedStyle] = useState<StyleOption | null>(STYLE_OPTIONS[0]);
   const [customStyle, setCustomStyle] = useState('');
   const [isCustom, setIsCustom] = useState(false);
@@ -63,15 +63,18 @@ const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownT
              <button onClick={onGoToInfo} className="text-gray-400 hover:text-white transition-colors" aria-label={t('aria_info')}>
                 <QuestionMarkCircleIcon className="w-6 h-6" />
             </button>
-            <button onClick={onGoToProfile} className="text-gray-400 hover:text-white transition-colors" aria-label={t('aria_my_profile')}>
-                <UserIcon className="w-6 h-6" />
-            </button>
-            <button onClick={onLogout} className="text-gray-400 hover:text-white transition-colors" aria-label={t('aria_logout')}>
+             <button onClick={onLogout} className="text-gray-400 hover:text-white transition-colors" aria-label={t('aria_logout')}>
                 <LogoutIcon className="w-6 h-6" />
             </button>
-            {user.selfie && (
-                <img src={user.selfie} alt={t('aria_user_selfie')} className="w-10 h-10 rounded-full object-cover border-2 border-fuchsia-500" />
-            )}
+            <button onClick={onGoToProfile} className="rounded-full overflow-hidden border-2 border-fuchsia-500 hover:border-cyan-500 transition-colors" aria-label={t('aria_my_profile')}>
+                {user.selfie ? (
+                    <img src={user.selfie} alt={t('aria_user_selfie')} className="w-10 h-10 object-cover" />
+                ) : (
+                    <div className="w-10 h-10 bg-gray-700 flex items-center justify-center">
+                        <UserIcon className="w-6 h-6 text-gray-400" />
+                    </div>
+                )}
+            </button>
           </div>
         </div>
       </header>
@@ -117,7 +120,7 @@ const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownT
                         <div className="text-center mt-2 p-3 bg-gray-700/50 rounded-lg">
                            <p className="font-semibold text-fuchsia-400">{t('main_view_pro_promo_title')}</p>
                            <p className="text-xs text-gray-300 mt-1">{t('main_view_pro_promo_subtitle')}</p>
-                           <button onClick={onGoToPro} className="mt-2 text-sm bg-white text-gray-900 font-bold py-1 px-4 rounded-full hover:bg-gray-200 transition-colors">
+                           <button onClick={onGoToPayment} className="mt-2 text-sm bg-white text-gray-900 font-bold py-1 px-4 rounded-full hover:bg-gray-200 transition-colors">
                             {t('main_view_pro_promo_button')}
                            </button>
                         </div>

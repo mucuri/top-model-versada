@@ -109,6 +109,11 @@ export const translations: Translations = {
     it: 'Paese',
     en: 'Country'
   },
+  profile_setup_country_placeholder: {
+    pt: 'Digite seu país',
+    it: 'Inserisci il tuo paese',
+    en: 'Enter your country'
+  },
   profile_setup_username_label: {
     pt: 'Nome de Usuário',
     it: 'Nome Utente',
@@ -217,6 +222,7 @@ export const translations: Translations = {
   main_view_cooldown_message: { pt: 'Você pode gerar uma imagem a cada {0} minutos.', it: 'Puoi generare un\'immagine ogni {0} minuti.', en: 'You can generate an image every {0} minutes.' },
   community_title: { pt: 'Comunidade Top Model', it: 'Community Top Model', en: 'Top Model Community' },
   community_empty: { pt: 'A comunidade ainda está vazia. Seja o primeiro a criar uma imagem!', it: 'La community è ancora vuota. Sii il primo a creare un\'immagine!', en: 'The community is still empty. Be the first to create an image!' },
+  community_use_style_button: { pt: 'Usar Estilo', it: 'Usa Stile', en: 'Use Style' },
   // Modal
   modal_use_style_button: { pt: '✨ Usar este Estilo', it: '✨ Usa questo Stile', en: '✨ Use this Style' },
   // Profile Screen
@@ -224,23 +230,23 @@ export const translations: Translations = {
   profile_screen_change_selfie: { pt: 'Mudar Selfie (PRO)', it: 'Cambia Selfie (PRO)', en: 'Change Selfie (PRO)' },
   profile_screen_pro_title: { pt: 'Leve seu perfil ao próximo nível!', it: 'Porta il tuo profilo al livello successivo!', en: 'Take your profile to the next level!' },
   profile_screen_pro_desc: { pt: 'Com o plano PRO você pode mudar sua selfie e nome de usuário a qualquer momento, além de ter gerações ilimitadas.', it: 'Con il piano PRO puoi cambiare il tuo selfie e nome utente in qualsiasi momento, oltre ad avere generazioni illimitate.', en: 'With the PRO plan you can change your selfie and username at any time, plus have unlimited generations.' },
-  profile_screen_pro_button: { pt: 'Torne-se PRO', it: 'Diventa PRO', en: 'Become PRO' },
-  // Pro Screen
-  pro_screen_plans_title: { pt: 'Planos', it: 'Piani', en: 'Plans' },
-  pro_screen_title: { pt: 'Desbloqueie seu Potencial Máximo', it: 'Sblocca il tuo Massimo Potenziale', en: 'Unlock Your Maximum Potential' },
-  pro_screen_subtitle: { pt: 'Escolha o plano perfeito para acelerar sua carreira de modelo.', it: 'Scegli il piano perfetto per accelerare la tua carriera di modello.', en: 'Choose the perfect plan to accelerate your modeling career.' },
-  pro_screen_plus_payment: { pt: 'Pagamento Único', it: 'Pagamento Unico', en: 'One-time Payment' },
-  pro_screen_plus_feature_title: { pt: 'Desbloqueie o Upload de Fotos', it: 'Sblocca il Caricamento di Foto', en: 'Unlock Photo Upload' },
-  pro_screen_plus_feature_desc: { pt: 'Use qualquer foto do seu dispositivo para gerar imagens, não apenas a sua selfie!', it: 'Usa qualsiasi foto dal tuo dispositivo per generare immagini, non solo il tuo selfie!', en: 'Use any photo from your device to generate images, not just your selfie!' },
-  pro_screen_plus_whatsapp_label: { pt: 'Cadastre seu WhatsApp para novidades', it: 'Registra il tuo WhatsApp per novità', en: 'Register your WhatsApp for news' },
-  pro_screen_plus_button: { pt: 'Desbloquear com WhatsApp', it: 'Sblocca con WhatsApp', en: 'Unlock with WhatsApp' },
-  pro_screen_pro_subtitle: { pt: 'A experiência completa de modelo', it: 'L\'esperienza completa di modello', en: 'The complete model experience' },
-  pro_screen_pro_feature1: { pt: 'Gerações ilimitadas (sem espera)', it: 'Generazioni illimitate (senza attesa)', en: 'Unlimited generations (no waiting)' },
-  pro_screen_pro_feature2: { pt: 'Qualidade de imagem superior (HD)', it: 'Qualità dell\'immagine superiore (HD)', en: 'Superior image quality (HD)' },
-  pro_screen_pro_feature3: { pt: 'Sem marca d\'água nas fotos', it: 'Nessun watermark sulle foto', en: 'No watermark on photos' },
-  pro_screen_pro_feature4: { pt: 'Acesso a estilos e poses exclusivas', it: 'Accesso a stili e pose esclusive', en: 'Access to exclusive styles and poses' },
-  pro_screen_pro_monthly: { pt: 'mês', it: 'mese', en: 'month' },
-  pro_screen_pro_button: { pt: 'Assinar PRO', it: 'Abbonati a PRO', en: 'Subscribe to PRO' },
+  profile_screen_pro_button: { pt: 'Ver Planos PRO', it: 'Vedi Piani PRO', en: 'View PRO Plans' },
+  // Payment Screen (New)
+  payment_screen_title: { pt: 'Torne-se PRO', it: 'Diventa PRO', en: 'Become PRO' },
+  payment_screen_subtitle: { pt: 'Desbloqueie seu potencial máximo.', it: 'Sblocca il tuo potenziale massimo.', en: 'Unlock your full potential.' },
+  payment_screen_price: { pt: 'R$ 29,90', it: '€ 5,99', en: '$ 5.99' },
+  payment_screen_monthly: { pt: '/mês', it: '/mese', en: '/month' },
+  payment_screen_features_title: { pt: 'O que você ganha:', it: 'Cosa ottieni:', en: 'What you get:' },
+  payment_screen_feature1: { pt: 'Gerações ilimitadas (sem espera)', it: 'Generazioni illimitate (senza attesa)', en: 'Unlimited generations (no waiting)' },
+  payment_screen_feature2: { pt: 'Qualidade de imagem superior (HD)', it: 'Qualità dell\'immagine superiore (HD)', en: 'Superior image quality (HD)' },
+  payment_screen_feature3: { pt: 'Sem marca d\'água nas fotos', it: 'Nessun watermark sulle foto', en: 'No watermark on photos' },
+  payment_screen_feature4: { pt: 'Acesso a estilos e poses exclusivas', it: 'Accesso a stili e pose esclusive', en: 'Access to exclusive styles and poses' },
+  payment_screen_secure_payment: { pt: 'Pagamento 100% Seguro', it: 'Pagamento Sicuro al 100%', en: '100% Secure Payment' },
+  payment_screen_select_method: { pt: 'Selecione a forma de pagamento', it: 'Seleziona il metodo di pagamento', en: 'Select payment method' },
+  payment_screen_pix: { pt: 'Pix', it: 'Pix', en: 'Pix' },
+  payment_screen_card: { pt: 'Cartão de Crédito/Débito', it: 'Carta di Credito/Debito', en: 'Credit/Debit Card' },
+  payment_screen_paypal: { pt: 'PayPal', it: 'PayPal', en: 'PayPal' },
+  payment_screen_pay_button: { pt: 'Pagar e Assinar', it: 'Paga e Abbonati', en: 'Pay and Subscribe' },
   // Info Screen
   info_screen_title: { pt: 'Informações', it: 'Informazioni', en: 'Information' },
   info_screen_what_is_title: { pt: 'O que é o {0}?', it: 'Cos\'è {0}?', en: 'What is {0}?' },

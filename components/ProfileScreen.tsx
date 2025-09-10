@@ -5,17 +5,17 @@ import { ArrowLeftIcon } from './icons';
 interface ProfileScreenProps {
   user: User;
   onBack: () => void;
-  onGoToPro: () => void;
+  onGoToPayment: () => void;
   // Fix: Update type for t function to allow for arguments
   t: (key: string, ...args: any[]) => string;
   language: Language;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onBack, onGoToPro, t }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onBack, onGoToPayment, t }) => {
 
   const countryToFlag = (countryName: string): string => {
     const flags: { [key: string]: string } = { 'Brasil': '🇧🇷', 'Italia': '🇮🇹', 'Italy': '🇮🇹' };
-    return flags[countryName] || '🏳️';
+    return flags[countryName] || '🌍';
   };
 
   return (
@@ -32,7 +32,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onBack, onGoToPro, 
           <div className="relative group">
             <img src={user.selfie || ''} alt="User selfie" className="w-32 h-32 rounded-full object-cover border-4 border-fuchsia-500" />
             <div 
-              onClick={onGoToPro}
+              onClick={onGoToPayment}
               className="absolute inset-0 bg-black/70 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-2 text-center"
             >
               <i className="fa-solid fa-lock text-yellow-400 mb-1"></i>
@@ -64,7 +64,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onBack, onGoToPro, 
         <div className="mt-10 text-center p-4 bg-gray-800 border border-fuchsia-500/30 rounded-lg">
             <h3 className="font-bold text-lg text-fuchsia-400">{t('profile_screen_pro_title')}</h3>
             <p className="text-sm text-gray-300 mt-2 mb-4">{t('profile_screen_pro_desc')}</p>
-            <button onClick={onGoToPro} className="w-full bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-bold py-3 rounded-md hover:opacity-90 transition-opacity">
+            <button onClick={onGoToPayment} className="w-full bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-bold py-3 rounded-md hover:opacity-90 transition-opacity">
                 {t('profile_screen_pro_button')}
             </button>
         </div>

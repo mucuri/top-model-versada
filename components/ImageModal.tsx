@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GeneratedImage, Language } from '../types';
-import { CloseIcon, HeartIcon, ShareIcon } from './icons';
+import { CloseIcon, HeartIcon, ShareIcon, MagicWandIcon } from './icons';
 
 interface ImageModalProps {
   image: GeneratedImage;
@@ -19,7 +19,7 @@ const countryToFlag = (countryName: string): string => {
         'Italia': '🇮🇹',
         'Italy': '🇮🇹',
     };
-    return flags[countryName] || '🏳️';
+    return flags[countryName] || '🌍'; // Default to world emoji
 };
 
 const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare, onGenerate, cooldownTime, t }) => {
@@ -78,16 +78,15 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
         </div>
 
         <div className="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-center mb-4">
               <div className="flex-1 mr-4">
-                 <div className="flex items-center space-x-2 mb-2">
+                 <div className="flex items-center space-x-2">
                     <span className="text-2xl">{countryToFlag(image.authorCountry)}</span>
                     <div>
                         <p className="text-white text-base font-bold">@{image.author}</p>
                         <p className="text-gray-300 text-sm">{image.authorCity}</p>
                     </div>
                 </div>
-                <p className="text-gray-400 text-sm">{image.prompt}</p>
               </div>
               <div className="flex items-center space-x-4">
                   <button 
@@ -112,6 +111,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
                 disabled={!canGenerate}
                 className="w-full bg-gradient-to-r from-fuchsia-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity duration-300 flex justify-center items-center text-base"
             >
+                 <MagicWandIcon className="w-5 h-5 mr-2" />
                 {canGenerate ? (
                     t('modal_use_style_button')
                 ) : (

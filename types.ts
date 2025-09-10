@@ -6,7 +6,7 @@ export enum AppStep {
   STYLE_SELECTION,
   GENERATING,
   MAIN_VIEW,
-  PRO_SCREEN,
+  PAYMENT_SCREEN, // Renamed from PRO_SCREEN
   INFO_SCREEN,
   PROFILE_SCREEN, // New step for user profile
 }

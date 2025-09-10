@@ -6,7 +6,7 @@ import SelfieCapture from './components/SelfieCapture';
 import StyleSelector from './components/StyleSelector';
 import MainView from './components/MainView';
 import TermsScreen from './components/TermsScreen';
-import ProScreen from './components/ProScreen';
+import PaymentScreen from './components/PaymentScreen';
 import InfoScreen from './components/InfoScreen';
 import ProfileScreen from './components/ProfileScreen';
 import ImageModal from './components/ImageModal';
@@ -29,7 +29,8 @@ const App: React.FC = () => {
   const [cooldownTime, setCooldownTime] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
   const [showWelcomeBanner, setShowWelcomeBanner] = useState<boolean>(false);
-  const [language, setLanguage] = useState<Language>('en');
+  // Default language is now always Portuguese for new users
+  const [language, setLanguage] = useState<Language>('pt');
 
   const t = useCallback((key: string, ...args: (string | number)[]) => {
     const translation = translations[key]?.[language] || key;
@@ -130,7 +131,7 @@ const App: React.FC = () => {
       if (storedUser) {
         const parsedUser: User = JSON.parse(storedUser);
         setUser(parsedUser);
-        setLanguage(parsedUser.language || 'en');
+        setLanguage(parsedUser.language || 'pt'); // Default to PT if language is missing
 
         if (parsedUser.hasCompletedSetup) {
           setShowWelcomeBanner(true);
@@ -151,10 +152,7 @@ const App: React.FC = () => {
           else setAppStep(AppStep.STYLE_SELECTION);
         }
       } else {
-        const browserLang = navigator.language.split('-')[0];
-        if (browserLang === 'pt') setLanguage('pt');
-        else if (browserLang === 'it') setLanguage('it');
-        else setLanguage('en');
+        // New user, default is already 'pt'
       }
     } catch (err) {
       console.error("Failed to load state from localStorage", err);
@@ -182,6 +180,7 @@ const App: React.FC = () => {
   }, [communityImages]);
 
   const handleLogin = () => {
+    // Default country is Brasil
     const mockGoogleData = { firstName: 'Gaetano', country: 'Brasil' };
     let baseUsername = `${mockGoogleData.firstName}Model`;
     let finalUsername = baseUsername;
@@ -206,8 +205,9 @@ const App: React.FC = () => {
     setAppStep(AppStep.PROFILE_SETUP);
   };
 
-  const handleProfileComplete = (name: string, city: string, selectedLanguage: Language) => {
-    setUser(prevUser => ({ ...prevUser, name, city, language: selectedLanguage, selfie: null }));
+  // Updated to accept country from the setup screen
+  const handleProfileComplete = (name: string, city: string, country: string, selectedLanguage: Language) => {
+    setUser(prevUser => ({ ...prevUser, name, city, country, language: selectedLanguage, selfie: null }));
     setLanguage(selectedLanguage);
     existingUsernames.add(name);
     setAppStep(AppStep.SELFIE_CAPTURE);
@@ -304,7 +304,7 @@ const App: React.FC = () => {
 
   const handleImageSelect = (image: GeneratedImage) => setSelectedImage(image);
   const handleCloseModal = () => setSelectedImage(null);
-  const handleGoToProScreen = () => setAppStep(AppStep.PRO_SCREEN);
+  const handleGoToPaymentScreen = () => setAppStep(AppStep.PAYMENT_SCREEN);
   const handleGoToMainView = () => setAppStep(AppStep.MAIN_VIEW);
   const handleGoToInfoScreen = () => setAppStep(AppStep.INFO_SCREEN);
   const handleGoToProfileScreen = () => setAppStep(AppStep.PROFILE_SCREEN);
@@ -334,12 +334,12 @@ const App: React.FC = () => {
         return <GeneratingScreen />;
       case AppStep.MAIN_VIEW:
         if (!user || !user.name || !user.city || !user.country) { setAppStep(AppStep.LOGIN); return null; }
-        return <MainView user={user as User} images={communityImages} onGenerate={handleStyleSelect} cooldownTime={cooldownTime} onLike={handleLike} onShare={handleShare} onImageSelect={handleImageSelect} onGoToPro={handleGoToProScreen} onGoToInfo={handleGoToInfoScreen} onGoToProfile={handleGoToProfileScreen} onLogout={handleLogout} {...commonProps} />;
-      case AppStep.PRO_SCREEN:
-        return <ProScreen onBack={handleGoToMainView} {...commonProps} />;
+        return <MainView user={user as User} images={communityImages} onGenerate={handleStyleSelect} cooldownTime={cooldownTime} onLike={handleLike} onShare={handleShare} onImageSelect={handleImageSelect} onGoToPayment={handleGoToPaymentScreen} onGoToInfo={handleGoToInfoScreen} onGoToProfile={handleGoToProfileScreen} onLogout={handleLogout} {...commonProps} />;
+      case AppStep.PAYMENT_SCREEN:
+        return <PaymentScreen onBack={handleGoToMainView} {...commonProps} />;
       case AppStep.PROFILE_SCREEN:
         if (!user) { setAppStep(AppStep.LOGIN); return null; }
-        return <ProfileScreen user={user as User} onBack={handleGoToMainView} onGoToPro={handleGoToProScreen} {...commonProps} />;
+        return <ProfileScreen user={user as User} onBack={handleGoToMainView} onGoToPayment={handleGoToPaymentScreen} {...commonProps} />;
       case AppStep.INFO_SCREEN:
         return <InfoScreen onBack={handleGoToMainView} {...commonProps} />;
       default:

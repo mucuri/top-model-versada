@@ -19,7 +19,7 @@ const countryToFlag = (countryName: string): string => {
         'Italia': '🇮🇹',
         'Italy': '🇮🇹',
     };
-    return flags[countryName] || '🏳️';
+    return flags[countryName] || '🌍'; // Default to world emoji
 };
 
 const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, onImageSelect, onGenerate, cooldownTime, t }) => {
@@ -53,7 +53,19 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, 
                     </div>
                 </div>
                 
-                <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-700/50">
+                 <div className="mt-2 pt-2 border-t border-gray-700/50">
+                   <button 
+                        onClick={(e) => { e.stopPropagation(); onGenerate(image.prompt); }} 
+                        disabled={!canGenerate}
+                        className="w-full flex items-center justify-center space-x-2 text-sm bg-fuchsia-600/50 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-fuchsia-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed"
+                        aria-label={t('aria_generate_with_style')}
+                    >
+                        <MagicWandIcon className="w-4 h-4" />
+                        <span>{t('community_use_style_button')}</span>
+                    </button>
+                </div>
+                
+                <div className="flex justify-between items-center mt-3">
                    <button 
                       onClick={(e) => { e.stopPropagation(); onLike(image.id); }} 
                       className="flex items-center space-x-1.5 text-gray-300 hover:text-red-400 transition-colors"
@@ -62,16 +74,6 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, 
                       <HeartIcon className="w-5 h-5" filled={image.likedByUser} />
                       <span className="font-semibold text-sm">{image.likes}</span>
                   </button>
-                  <div className="flex items-center space-x-3">
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); onGenerate(image.prompt); }} 
-                        disabled={!canGenerate}
-                        className="text-gray-300 hover:text-fuchsia-400 transition-colors disabled:text-gray-600 disabled:cursor-not-allowed"
-                        aria-label={t('aria_generate_with_style')}
-                        title={t('aria_generate_with_style')}
-                    >
-                        <MagicWandIcon className="w-5 h-5" />
-                    </button>
                     <button 
                         onClick={(e) => { e.stopPropagation(); onShare(image); }}
                         className="text-gray-300 hover:text-cyan-400 transition-colors"
@@ -79,7 +81,6 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, 
                     >
                         <ShareIcon className="w-5 h-5" />
                     </button>
-                  </div>
                 </div>
               </div>
             </div>
