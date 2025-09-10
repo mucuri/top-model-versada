@@ -12,6 +12,15 @@ interface ImageModalProps {
   cooldownTime: number;
 }
 
+const countryToFlag = (countryName: string): string => {
+    // Simple mapping for demo purposes. A real app would use a library.
+    const flags: { [key: string]: string } = {
+        'Brasil': '🇧🇷',
+    };
+    return flags[countryName] || '🏳️';
+};
+
+
 const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare, onGenerate, cooldownTime }) => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -72,8 +81,14 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose, onLike, onShare
         <div className="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 mr-4">
-                <p className="text-white font-bold text-base">@{image.author}</p>
-                <p className="text-gray-400 text-sm mt-1">{image.prompt}</p>
+                 <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-2xl">{countryToFlag(image.authorCountry)}</span>
+                    <div>
+                        <p className="text-white text-base font-bold">@{image.author}</p>
+                        <p className="text-gray-300 text-sm">{image.authorCity}</p>
+                    </div>
+                </div>
+                <p className="text-gray-400 text-sm">{image.prompt}</p>
               </div>
               <div className="flex items-center space-x-4">
                   <button 

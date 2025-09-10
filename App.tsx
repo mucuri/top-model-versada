@@ -8,6 +8,7 @@ import MainView from './components/MainView';
 import TermsScreen from './components/TermsScreen';
 import ProScreen from './components/ProScreen';
 import InfoScreen from './components/InfoScreen';
+import ProfileScreen from './components/ProfileScreen';
 import ImageModal from './components/ImageModal';
 import { LoadingSpinner, CheckCircleIcon } from './components/icons';
 import { generateFashionImage } from './services/geminiService';
@@ -39,7 +40,9 @@ const GENERATING_TIPS = [
 ];
 
 
-const GeneratingScreen: React.FC = () => {
+// FIX: Removed React.FC type to fix cryptic type error.
+// TypeScript can infer the component type correctly.
+const GeneratingScreen = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentTip, setCurrentTip] = useState(GENERATING_TIPS[0]);
 
@@ -114,6 +117,8 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [cooldownTime, setCooldownTime] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState<boolean>(false);
+
 
   // Load state from localStorage on initial boot
   useEffect(() => {
@@ -124,6 +129,9 @@ const App: React.FC = () => {
         setUser(parsedUser);
 
         if (parsedUser.hasCompletedSetup) {
+          setShowWelcomeBanner(true);
+          const welcomeTimer = setTimeout(() => setShowWelcomeBanner(false), 2500);
+
           const storedImages = localStorage.getItem(IMAGES_STORAGE_KEY);
           if (storedImages) {
             const parsedImages: GeneratedImage[] = JSON.parse(storedImages);
@@ -132,6 +140,7 @@ const App: React.FC = () => {
             setCommunityImages(recentImages);
           }
           setAppStep(AppStep.MAIN_VIEW);
+          return () => clearTimeout(welcomeTimer);
         } else {
           // If setup wasn't completed, guide user back.
           if (!parsedUser.city) setAppStep(AppStep.PROFILE_SETUP);
@@ -139,7 +148,8 @@ const App: React.FC = () => {
           else setAppStep(AppStep.STYLE_SELECTION);
         }
       }
-    } catch (err) {
+    } catch (err)
+ {
       console.error("Failed to load state from localStorage", err);
       localStorage.removeItem(USER_STORAGE_KEY);
       localStorage.removeItem(IMAGES_STORAGE_KEY);
@@ -182,6 +192,14 @@ const App: React.FC = () => {
     setUser({ name: finalUsername, country: mockGoogleData.country });
     setAppStep(AppStep.TERMS_AGREEMENT);
   };
+  
+  const handleLogout = () => {
+    localStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem(IMAGES_STORAGE_KEY);
+    setUser(null);
+    setCommunityImages([]);
+    setAppStep(AppStep.LOGIN);
+  };
 
   const handleTermsAgree = () => {
     setAppStep(AppStep.PROFILE_SETUP);
@@ -201,7 +219,7 @@ const App: React.FC = () => {
   };
 
   const handleStyleSelect = async (prompt: string) => {
-    if (!user || !user.selfie || !user.name) {
+    if (!user || !user.selfie || !user.name || !user.city || !user.country) {
       setError("Erro: Dados do usuário incompletos.");
       setAppStep(AppStep.MAIN_VIEW);
       return;
@@ -215,6 +233,8 @@ const App: React.FC = () => {
         imageUrl,
         prompt,
         author: user.name,
+        authorCity: user.city,
+        authorCountry: user.country,
         likes: 0,
         likedByUser: false,
         createdAt: new Date().toISOString(), // Add creation date
@@ -308,6 +328,10 @@ const App: React.FC = () => {
     setAppStep(AppStep.INFO_SCREEN);
   }
 
+  const handleGoToProfileScreen = () => {
+    setAppStep(AppStep.PROFILE_SCREEN);
+  }
+
   const handleGenerateAndCloseModal = (prompt: string) => {
     handleCloseModal();
     // Use a small timeout to let the modal closing animation finish
@@ -340,10 +364,14 @@ const App: React.FC = () => {
           setAppStep(AppStep.LOGIN);
           return null;
         }
-        return <MainView user={user as User} images={communityImages} onGenerate={handleStyleSelect} cooldownTime={cooldownTime} onLike={handleLike} onShare={handleShare} onImageSelect={handleImageSelect} onGoToPro={handleGoToProScreen} onGoToInfo={handleGoToInfoScreen} />;
+        return <MainView user={user as User} images={communityImages} onGenerate={handleStyleSelect} cooldownTime={cooldownTime} onLike={handleLike} onShare={handleShare} onImageSelect={handleImageSelect} onGoToPro={handleGoToProScreen} onGoToInfo={handleGoToInfoScreen} onGoToProfile={handleGoToProfileScreen} onLogout={handleLogout} />;
       case AppStep.PRO_SCREEN:
         return <ProScreen onBack={handleGoToMainView} />;
+       case AppStep.PROFILE_SCREEN:
+         if (!user) { setAppStep(AppStep.LOGIN); return null; }
+        return <ProfileScreen user={user as User} onBack={handleGoToMainView} onGoToPro={handleGoToProScreen} />;
       case AppStep.INFO_SCREEN:
+        // FIX: Corrected typo in function name and removed invalid property.
         return <InfoScreen onBack={handleGoToMainView} />;
       default:
         return <LoginScreen onLogin={handleLogin} />;
@@ -356,6 +384,18 @@ const App: React.FC = () => {
          <div className="bg-red-500 text-white p-4 fixed top-0 left-0 right-0 z-50 text-center">
             <p>{error}</p>
             <button onClick={() => setError(null)} className="absolute top-1/2 right-4 -translate-y-1/2 font-bold">X</button>
+        </div>
+      )}
+      {showWelcomeBanner && user && (
+         <div className="bg-green-500 text-white p-3 fixed top-4 left-1/2 -translate-x-1/2 z-50 text-center rounded-lg shadow-lg animate-fade-in-down">
+            <p className="font-semibold">Bentornato, {user.name}!</p>
+             <style>{`
+                @keyframes fade-in-down {
+                    from { opacity: 0; transform: translate(-50%, -20px); }
+                    to { opacity: 1; transform: translate(-50%, 0); }
+                }
+                .animate-fade-in-down { animation: fade-in-down 0.5s ease-out forwards; }
+            `}</style>
         </div>
       )}
       {renderContent()}

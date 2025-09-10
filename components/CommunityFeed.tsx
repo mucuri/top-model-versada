@@ -12,6 +12,14 @@ interface CommunityFeedProps {
   cooldownTime: number;
 }
 
+const countryToFlag = (countryName: string): string => {
+    // Simple mapping for demo purposes. A real app would use a library.
+    const flags: { [key: string]: string } = {
+        'Brasil': '🇧🇷',
+    };
+    return flags[countryName] || '🏳️';
+};
+
 const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, onImageSelect, onGenerate, cooldownTime }) => {
   const canGenerate = cooldownTime < Date.now();
 
@@ -31,9 +39,12 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({ images, onLike, onShare, 
               <img src={image.imageUrl} alt={image.prompt} className="w-full rounded-lg shadow-lg" />
               
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 rounded-lg flex flex-col justify-between p-3 opacity-0 group-hover:opacity-100">
-                <div>
-                  <p className="text-white text-sm font-bold">@{image.author}</p>
-                  <p className="text-white text-xs mt-1 truncate">{image.prompt}</p>
+                <div className="flex items-center space-x-2">
+                    <span className="text-xl">{countryToFlag(image.authorCountry)}</span>
+                    <div>
+                        <p className="text-white text-sm font-bold">@{image.author}</p>
+                        <p className="text-white text-xs">{image.authorCity}</p>
+                    </div>
                 </div>
                 
                 <div className="flex justify-end items-center space-x-3">

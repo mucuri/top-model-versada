@@ -7,7 +7,8 @@ export enum AppStep {
   GENERATING,
   MAIN_VIEW,
   PRO_SCREEN,
-  INFO_SCREEN, // New step for info
+  INFO_SCREEN,
+  PROFILE_SCREEN, // New step for user profile
 }
 
 export interface User {
@@ -23,6 +24,8 @@ export interface GeneratedImage {
   imageUrl: string;
   prompt: string;
   author: string;
+  authorCity: string; // For privacy-aware display
+  authorCountry: string; // For privacy-aware display
   likes: number;
   likedByUser: boolean;
   createdAt: string; // ISO string for expiration tracking

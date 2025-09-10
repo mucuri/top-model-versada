@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, GeneratedImage, StyleOption } from '../types';
 import { STYLE_OPTIONS, APP_NAME, COOLDOWN_MINUTES } from '../constants';
 import CommunityFeed from './CommunityFeed';
-import { QuestionMarkCircleIcon } from './icons';
+import { QuestionMarkCircleIcon, UserIcon, LogoutIcon } from './icons';
 
 interface MainViewProps {
   user: User;
@@ -13,10 +13,12 @@ interface MainViewProps {
   onShare: (image: GeneratedImage) => void;
   onImageSelect: (image: GeneratedImage) => void;
   onGoToPro: () => void;
-  onGoToInfo: () => void; // New prop for info screen
+  onGoToInfo: () => void;
+  onGoToProfile: () => void;
+  onLogout: () => void;
 }
 
-const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownTime, onLike, onShare, onImageSelect, onGoToPro, onGoToInfo }) => {
+const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownTime, onLike, onShare, onImageSelect, onGoToPro, onGoToInfo, onGoToProfile, onLogout }) => {
   const [selectedStyle, setSelectedStyle] = useState<StyleOption | null>(STYLE_OPTIONS[0]);
   const [customStyle, setCustomStyle] = useState('');
   const [isCustom, setIsCustom] = useState(false);
@@ -55,21 +57,18 @@ const MainView: React.FC<MainViewProps> = ({ user, images, onGenerate, cooldownT
           <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-500">
             {APP_NAME}
           </h1>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
              <button onClick={onGoToInfo} className="text-gray-400 hover:text-white transition-colors" aria-label="Informações">
-                <QuestionMarkCircleIcon className="w-7 h-7" />
+                <QuestionMarkCircleIcon className="w-6 h-6" />
             </button>
-            <span className="font-semibold hidden sm:block">Olá, {user.name}!</span>
+            <button onClick={onGoToProfile} className="text-gray-400 hover:text-white transition-colors" aria-label="Meu Perfil">
+                <UserIcon className="w-6 h-6" />
+            </button>
+            <button onClick={onLogout} className="text-gray-400 hover:text-white transition-colors" aria-label="Sair">
+                <LogoutIcon className="w-6 h-6" />
+            </button>
             {user.selfie && (
-              <div className="relative group">
                 <img src={user.selfie} alt="user selfie" className="w-10 h-10 rounded-full object-cover border-2 border-fuchsia-500" />
-                <div 
-                  onClick={() => alert('Mudar a selfie é uma funcionalidade PRO. Torne-se PRO para desbloquear!')}
-                  className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  <span className="text-white text-xs font-bold">Trocar</span>
-                </div>
-              </div>
             )}
           </div>
         </div>
