@@ -1,6 +1,6 @@
 {
-  "name": "Top Model AI",
-  "description": "An application that uses AI to generate fashion model-style photos. Users can upload their selfie, choose a fashion style, and create a professional-looking photo collage with six different poses, ready for their portfolio.",
+  "name": "Top Model VERSADA",
+  "description": "An application that uses AI to generate fashion model-style photos. Users can upload their selfie, choose a fashion style, and create a professional-looking photo collage with six different poses, ready for their portfolio. Then the photo enters the community for a moment of fame because it's seen by all users, and if it receives many likes, it stays visible for longer. Finally, everyone can have moments of fame in the fashion world with their own fashion images, like a runway model ready to walk the runway, or even a photo model. Top Model VERSADA",
   "requestFramePermissions": [
     "camera"
   ]
